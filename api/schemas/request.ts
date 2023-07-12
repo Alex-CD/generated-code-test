@@ -30,6 +30,7 @@ export const testSchema = {
 export const pingSchema = {
   description: "responds pong",
   summary: "pong!",
+  tags: ["user"],
   response: {
     200: {
       description: "Succesful png",
