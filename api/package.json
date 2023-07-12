@@ -20,6 +20,8 @@
   },
   "homepage": "https://github.com/Alex-CD/generated-code-test#readme",
   "dependencies": {
+    "@fastify/swagger": "^8.8.0",
+    "@fastify/swagger-ui": "^1.9.2",
     "fastify": "^4.19.2"
   },
   "devDependencies": {
