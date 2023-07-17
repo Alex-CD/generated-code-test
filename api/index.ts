@@ -128,7 +128,7 @@ const server = fastify();
       },
     },
     (req: any, reply) => {
-      reply.send({ hello: `Hello ${req.body.hello}` });
+      reply.code(201).send({ hello: `Hello ${req.body.hello}` });
     }
   );
 
