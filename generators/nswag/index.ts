@@ -7,8 +7,8 @@ let main = async () => {
     fetch: fetch,
   });
 
-  console.log(await client.ping());
 
+  // TODO: Look into why response type is called Anonymous: Issue with nswag generator or with openapi doc
   console.log(
     await client.someRoute(
       new Body({
