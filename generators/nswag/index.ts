@@ -1,9 +1,13 @@
 import { Client, Body } from "./client";
 
-const client = new Client();
+import fetch from "cross-fetch";
 
 let main = async () => {
-  console.log(JSON.stringify(await client.ping()));
+  const client = new Client("http://127.0.0.1:8080", {
+    fetch: fetch,
+  });
+
+  console.log(await client.ping());
 
   console.log(
     await client.someRoute(
