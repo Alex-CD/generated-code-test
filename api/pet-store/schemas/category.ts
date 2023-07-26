@@ -9,5 +9,5 @@ export const categorySchema = {
             type: 'string',
         },
     },
-    required: ['id', 'name'],
+    required: ['name'],
 }

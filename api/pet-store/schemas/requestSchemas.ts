@@ -13,3 +13,17 @@ export const getPetsSchema = {
         }
     }
 }
+
+export const addPetSchema = {
+    tags: ["pet"],
+    description: "add a new pet",
+    body: {
+        ...petSchema
+    },
+    response: {
+        200: {
+            description: 'the added pet',
+            ...petSchema
+        }
+    }
+}

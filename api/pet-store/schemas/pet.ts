@@ -10,7 +10,14 @@ export const petSchema = {
         name: {
             type: 'string',
         },
-        category: categorySchema
+        categoryId: {
+            type: 'number',
+        },
+        category: categorySchema,
+        status: {
+            enum: ['available', 'pending', 'sold'],
+            type: 'string'
+        }
     },
-    required: ['id', 'name', 'category'],
+    required: ['name', 'categoryId', 'status'],
 }

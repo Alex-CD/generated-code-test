@@ -13,3 +13,7 @@ export const getPets: RouteHandler =  async function(req, reply) {
     ];
     reply.code(200).send(result);
 }
+
+export const addPet: RouteHandler =  async function(req, reply) {
+    reply.code(200).send(req.body);
+}

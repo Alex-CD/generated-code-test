@@ -1,4 +1,4 @@
-import { Client, Body } from "./client";
+import { Client, Body, Pet, PetStatus } from "./client";
 
 import fetch from "cross-fetch";
 
@@ -7,15 +7,26 @@ let main = async () => {
     fetch: fetch,
   });
 
+  const allPets = await client.petsAll();
 
-  // TODO: Look into why response type is called Anonymous: Issue with nswag generator or with openapi doc
-  console.log(
-    await client.someRoute(
-      new Body({
-        hello: "WOOOO",
-      })
-    )
-  );
+  const newPet = new Pet({
+    id: 0,
+    name: '',
+    categoryId: 1,
+    status: PetStatus.Available
+  });
+
+  // TODO: Post new pet
+
+
+  // // TODO: Look into why response type is called Anonymous: Issue with nswag generator or with openapi doc
+  // console.log(
+  //   await client.someRoute(
+  //     new Body({
+  //       hello: "WOOOO",
+  //     })
+  //   )
+  // );
 };
 
 main();

@@ -108,7 +108,7 @@ export class Client {
     /**
      * @return list of pets
      */
-    pets(): Promise<Pet[]> {
+    petsAll(): Promise<Pet[]> {
         let url_ = this.baseUrl + "/pets";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -120,11 +120,11 @@ export class Client {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processPets(_response);
+            return this.processPetsAll(_response);
         });
     }
 
-    protected processPets(response: Response): Promise<Pet[]> {
+    protected processPetsAll(response: Response): Promise<Pet[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -147,6 +147,48 @@ export class Client {
             });
         }
         return Promise.resolve<Pet[]>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return the added pet
+     */
+    pets(body: Body2 | null | undefined): Promise<Anonymous3> {
+        let url_ = this.baseUrl + "/pets";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processPets(_response);
+        });
+    }
+
+    protected processPets(response: Response): Promise<Anonymous3> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = Anonymous3.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Anonymous3>(null as any);
     }
 }
 
@@ -184,6 +226,58 @@ export class Body implements IBody {
 
 export interface IBody {
     hello?: string | undefined;
+}
+
+export class Body2 implements IBody2 {
+    id?: number | undefined;
+    name!: string;
+    categoryId!: number;
+    category?: Category | undefined;
+    status!: Body2Status;
+
+    constructor(data?: IBody2) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.categoryId = _data["categoryId"];
+            this.category = _data["category"] ? Category.fromJS(_data["category"]) : <any>undefined;
+            this.status = _data["status"];
+        }
+    }
+
+    static fromJS(data: any): Body2 {
+        data = typeof data === 'object' ? data : {};
+        let result = new Body2();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["categoryId"] = this.categoryId;
+        data["category"] = this.category ? this.category.toJSON() : <any>undefined;
+        data["status"] = this.status;
+        return data;
+    }
+}
+
+export interface IBody2 {
+    id?: number | undefined;
+    name: string;
+    categoryId: number;
+    category?: Category | undefined;
+    status: Body2Status;
 }
 
 /** Succesful response */
@@ -263,9 +357,11 @@ export interface IAnonymous2 {
 }
 
 export class Pet implements IPet {
-    id!: number;
+    id?: number | undefined;
     name!: string;
-    category!: Category;
+    categoryId!: number;
+    category?: Category2 | undefined;
+    status!: PetStatus;
 
     constructor(data?: IPet) {
         if (data) {
@@ -274,16 +370,15 @@ export class Pet implements IPet {
                     (<any>this)[property] = (<any>data)[property];
             }
         }
-        if (!data) {
-            this.category = new Category();
-        }
     }
 
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
             this.name = _data["name"];
-            this.category = _data["category"] ? Category.fromJS(_data["category"]) : new Category();
+            this.categoryId = _data["categoryId"];
+            this.category = _data["category"] ? Category2.fromJS(_data["category"]) : <any>undefined;
+            this.status = _data["status"];
         }
     }
 
@@ -298,19 +393,77 @@ export class Pet implements IPet {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
+        data["categoryId"] = this.categoryId;
         data["category"] = this.category ? this.category.toJSON() : <any>undefined;
+        data["status"] = this.status;
         return data;
     }
 }
 
 export interface IPet {
-    id: number;
+    id?: number | undefined;
     name: string;
-    category: Category;
+    categoryId: number;
+    category?: Category2 | undefined;
+    status: PetStatus;
+}
+
+/** the added pet */
+export class Anonymous3 implements IAnonymous3 {
+    id?: number | undefined;
+    name!: string;
+    categoryId!: number;
+    category?: Category3 | undefined;
+    status!: Status;
+
+    constructor(data?: IAnonymous3) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.categoryId = _data["categoryId"];
+            this.category = _data["category"] ? Category3.fromJS(_data["category"]) : <any>undefined;
+            this.status = _data["status"];
+        }
+    }
+
+    static fromJS(data: any): Anonymous3 {
+        data = typeof data === 'object' ? data : {};
+        let result = new Anonymous3();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["categoryId"] = this.categoryId;
+        data["category"] = this.category ? this.category.toJSON() : <any>undefined;
+        data["status"] = this.status;
+        return data;
+    }
+}
+
+/** the added pet */
+export interface IAnonymous3 {
+    id?: number | undefined;
+    name: string;
+    categoryId: number;
+    category?: Category3 | undefined;
+    status: Status;
 }
 
 export class Category implements ICategory {
-    id!: number;
+    id?: number | undefined;
     name!: string;
 
     constructor(data?: ICategory) {
@@ -345,8 +498,106 @@ export class Category implements ICategory {
 }
 
 export interface ICategory {
-    id: number;
+    id?: number | undefined;
     name: string;
+}
+
+export enum Body2Status {
+    Available = "available",
+    Pending = "pending",
+    Sold = "sold",
+}
+
+export class Category2 implements ICategory2 {
+    id?: number | undefined;
+    name!: string;
+
+    constructor(data?: ICategory2) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+        }
+    }
+
+    static fromJS(data: any): Category2 {
+        data = typeof data === 'object' ? data : {};
+        let result = new Category2();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data;
+    }
+}
+
+export interface ICategory2 {
+    id?: number | undefined;
+    name: string;
+}
+
+export enum PetStatus {
+    Available = "available",
+    Pending = "pending",
+    Sold = "sold",
+}
+
+export class Category3 implements ICategory3 {
+    id?: number | undefined;
+    name!: string;
+
+    constructor(data?: ICategory3) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+        }
+    }
+
+    static fromJS(data: any): Category3 {
+        data = typeof data === 'object' ? data : {};
+        let result = new Category3();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data;
+    }
+}
+
+export interface ICategory3 {
+    id?: number | undefined;
+    name: string;
+}
+
+export enum Status {
+    Available = "available",
+    Pending = "pending",
+    Sold = "sold",
 }
 
 export class ApiException extends Error {
