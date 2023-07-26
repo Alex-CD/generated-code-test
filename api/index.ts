@@ -1,5 +1,6 @@
 import fastify from "fastify";
 import { pingSchema } from "./schemas/request";
+import { petStoreEndpoints } from "./pet-store/endpoints";
 
 const server = fastify();
 
@@ -131,6 +132,8 @@ const server = fastify();
       reply.code(201).send({ hello: `Hello ${req.body.hello}` });
     }
   );
+
+  server.register(petStoreEndpoints);
 
   // then call these
   await server.ready();

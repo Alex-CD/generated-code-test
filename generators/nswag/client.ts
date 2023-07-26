@@ -104,6 +104,50 @@ export class Client {
             });
         }
     }
+
+    /**
+     * @return list of pets
+     */
+    pets(): Promise<Pet[]> {
+        let url_ = this.baseUrl + "/pets";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processPets(_response);
+        });
+    }
+
+    protected processPets(response: Response): Promise<Pet[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(Pet.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Pet[]>(null as any);
+    }
 }
 
 export class Body implements IBody {
@@ -216,6 +260,93 @@ export class Anonymous2 implements IAnonymous2 {
 /** Default response */
 export interface IAnonymous2 {
     foo?: string | undefined;
+}
+
+export class Pet implements IPet {
+    id!: number;
+    name!: string;
+    category!: Category;
+
+    constructor(data?: IPet) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.category = new Category();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.category = _data["category"] ? Category.fromJS(_data["category"]) : new Category();
+        }
+    }
+
+    static fromJS(data: any): Pet {
+        data = typeof data === 'object' ? data : {};
+        let result = new Pet();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["category"] = this.category ? this.category.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IPet {
+    id: number;
+    name: string;
+    category: Category;
+}
+
+export class Category implements ICategory {
+    id!: number;
+    name!: string;
+
+    constructor(data?: ICategory) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+        }
+    }
+
+    static fromJS(data: any): Category {
+        data = typeof data === 'object' ? data : {};
+        let result = new Category();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data;
+    }
+}
+
+export interface ICategory {
+    id: number;
+    name: string;
 }
 
 export class ApiException extends Error {
